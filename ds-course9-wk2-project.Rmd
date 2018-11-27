@@ -1,0 +1,60 @@
+---
+title: "NL Airport Overview"
+author: "Thomas Bell"
+date: "2018 M11 26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+This page contains an interactive map created with Leaflet. The map shows an overview of (former) air and heliports in The Netherlands.
+
+The data used to construct this map was downloaded from a public domain source http://ourairports.com/data/ *accessed 2018/11/26 @ 22:16CET*
+
+```{r data}
+# Airport codes from around the world. Downloaded from public domain source http://ourairports.com/data/ on 2018/11/26 @ 22:16CET
+# download.file("http://ourairports.com/data/airports.csv", "airports.csv")
+
+airports <- read.csv("airports.csv")
+airports <- airports[airports$iso_country == "NL",]
+airports <- na.omit(airports)
+```
+
+```{r icons}
+library(leaflet)
+
+# Airport codes from around the world. Downloaded from public domain source http://ourairports.com/data/ on 2018/11/26 @ 23:05CET
+
+# download.file("http://ourairports.com/images/maps/large-airport-marker.png","large.png", mode = "wb")
+# download.file("http://ourairports.com/images/maps/medium-airport-marker.png","medium.png", mode = "wb")
+# download.file("http://ourairports.com/images/maps/small-airport-marker.png","small.png", mode = "wb")
+# download.file("http://ourairports.com/images/maps/closed-airport-marker.png","closed.png", mode = "wb")
+# download.file("http://ourairports.com/images/maps/heliport-marker.png","heliport.png", mode = "wb")
+
+airportIcons <- iconList(
+  large_airport = makeIcon("large.png"),
+  medium_airport = makeIcon("medium.png"),
+  small_airport = makeIcon("small.png"),
+  closed = makeIcon("closed.png"),
+  heliport = makeIcon("heliport.png")
+)
+```
+
+
+
+
+```{r leaflet}
+map <- leaflet() %>%
+  addTiles() %>%
+  addMarkers(lat = airports$latitude_deg,
+             lng = airports$longitude_deg,
+             label = airports$name,
+             icon = airportIcons[airports$type],
+             clusterOptions = markerClusterOptions())
+  
+
+map
+```
+
